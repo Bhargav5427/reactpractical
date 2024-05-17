@@ -40,10 +40,9 @@ export const PostData = createAsyncThunk("postData", async ({ payload }) => {
   }
 });
 export const DeleteData = createAsyncThunk("deletedata", async ({ id }) => {
-  console.log("🚀 ~ PostData ~ payload:", payload);
   try {
-    const res = await axios.post(process.env.REACT_APP_BASE_URL + id);
-    console.log("🚀 ~ PostData ~ res:", res.data);
+    const res = await axios.delete(process.env.REACT_APP_BASE_URL + id);
+    console.log("🚀 ~ DeleteData ~ res:", res)
     return res.data;
   } catch (error) {
     if (error.response) {
@@ -94,7 +93,7 @@ export const reduxSlice = createSlice({
       .addCase(DeleteData.fulfilled, (state, action) => {
         console.log("🚀 ~ .addCase ~ action:", action);
         state.product.isLoading = false;
-        state.product.data = state.product.data.filter((val)=>val.id !== action.payload);
+        state.product.data = state.product.data.filter((val)=>val.id !== action.payload.id);
       })
       .addCase(DeleteData.rejected, (state, action) => {
         state.product.isLoading = false;

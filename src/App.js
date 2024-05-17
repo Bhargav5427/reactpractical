@@ -11,7 +11,7 @@ function App() {
     let dispatch = useDispatch()
     useEffect(()=>{
       dispatch(fetchData())
-    })
+    },[])
   return (
     // <Routes>
     //   <Route patch="/" element={<Login />} />

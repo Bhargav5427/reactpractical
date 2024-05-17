@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useDispatch, useSelector } from "react-redux";
-import { PostData } from "../ReduxToolkit/Slice/reduxSlice";
+import { DeleteData, PostData } from "../ReduxToolkit/Slice/reduxSlice";
 
 const ProductForm = () => {
   const [formData, setFormData] = useState({
@@ -60,7 +60,7 @@ const ProductForm = () => {
   };
 
   let handleDelete =(id) => {
-    dispatch(DeleteData({ payload: id }));
+    dispatch(DeleteData({  id }));
   }
 
   return (
@@ -76,7 +76,7 @@ const ProductForm = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Casio Watch"
+                  placeholder="Enter Watch name"
                   required
                 />
               </div>
