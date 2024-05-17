@@ -9,8 +9,19 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useDispatch, useSelector } from "react-redux";
 import { DeleteData, PostData } from "../ReduxToolkit/Slice/reduxSlice";
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
+import Input from "@mui/joy/Input";
+import Modal from "@mui/joy/Modal";
+import ModalDialog from "@mui/joy/ModalDialog";
+import DialogTitle from "@mui/joy/DialogTitle";
+import DialogContent from "@mui/joy/DialogContent";
+import Stack from "@mui/joy/Stack";
+import { FaPlus } from "react-icons/fa";
 
 const ProductForm = () => {
+  
+  const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -135,9 +146,43 @@ const ProductForm = () => {
                     <TableCell align="center">{row.description}</TableCell>
                     <TableCell align="center">{row.price}</TableCell>
                     <TableCell align="center">
-                      <Button size="md" color="primary">
-                        Upadte
+                      <Button
+                        variant="outlined"
+                        color="neutral"
+                        onClick={() => setOpen(true)}
+                      >
+                        update
                       </Button>
+                      <Modal open={open} onClose={() => setOpen(false)}>
+                        <ModalDialog>
+                          <DialogTitle>Upadte Data</DialogTitle>
+                          <DialogContent>
+                            Fill in the information of the Product.
+                          </DialogContent>
+                          <form
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              setOpen(false);
+                            }}
+                          >
+                            <Stack spacing={2}>
+                              <FormControl>
+                                <FormLabel>Product Name</FormLabel>
+                                <Input autoFocus required />
+                              </FormControl>
+                              <FormControl>
+                                <FormLabel>Product Details</FormLabel>
+                                <Input required />
+                              </FormControl>
+                              <FormControl>
+                                <FormLabel>Price</FormLabel>
+                                <Input type="number" required />
+                              </FormControl>
+                              <Button type="submit">Submit</Button>
+                            </Stack>
+                          </form>
+                        </ModalDialog>
+                      </Modal>
                     </TableCell>
                     <TableCell align="center">
                       <Button
