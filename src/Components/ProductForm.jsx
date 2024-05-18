@@ -1,4 +1,4 @@
-import { Button, Grid, ListItem } from "@mui/joy";
+import { Button, FormLabel, Grid, Input, ListItem } from "@mui/joy";
 import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,25 +8,18 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useDispatch, useSelector } from "react-redux";
-import { DeleteData, PostData } from "../ReduxToolkit/Slice/reduxSlice";
-import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
-import Input from "@mui/joy/Input";
-import Modal from "@mui/joy/Modal";
-import ModalDialog from "@mui/joy/ModalDialog";
-import DialogTitle from "@mui/joy/DialogTitle";
-import DialogContent from "@mui/joy/DialogContent";
-import Stack from "@mui/joy/Stack";
-import { FaPlus } from "react-icons/fa";
-
+import {
+  DeleteData,
+  PostData,
+  UpdateData,
+} from "../ReduxToolkit/Slice/reduxSlice";
 const ProductForm = () => {
-  
-  const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
   });
+  const [view, setview] = useState();
 
   const { data, isError, isLoading } = useSelector(
     (state) => state.product.product
@@ -38,7 +31,7 @@ const ProductForm = () => {
   useEffect(() => {
     if (data && Array.isArray(data)) {
       const mappedData = data.map((item) => ({
-        id:item.id,
+        id: item.id,
         name: item.product_name,
         description: item.product_details,
         price: item.price,
@@ -69,11 +62,21 @@ const ProductForm = () => {
       price: "",
     });
   };
+  let handleDelete = (id) => {
+    dispatch(DeleteData({ id }));
+  };
 
-  let handleDelete =(id) => {
-    dispatch(DeleteData({  id }));
-  }
+  let handleView = (id) => {
+    let viewData = data.find((item) => item.id == id);
+    setview(viewData);
+  };
+  let handleUpdate = (e) => {
+    setview({ ...view, [e.target.name]: e.target.value });
+  };
 
+  let handleFinalUpdate = () => {
+    dispatch(UpdateData({ payload: view, id: view.id }));
+  };
   return (
     <Grid container spacing={2} columns={12} sx={{ flexGrow: 1 }}>
       <Grid item xs={4}>
@@ -146,43 +149,88 @@ const ProductForm = () => {
                     <TableCell align="center">{row.description}</TableCell>
                     <TableCell align="center">{row.price}</TableCell>
                     <TableCell align="center">
-                      <Button
-                        variant="outlined"
-                        color="neutral"
-                        onClick={() => setOpen(true)}
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal"
+                        onClick={() => handleView(row.id)}
                       >
                         update
-                      </Button>
-                      <Modal open={open} onClose={() => setOpen(false)}>
-                        <ModalDialog>
-                          <DialogTitle>Upadte Data</DialogTitle>
-                          <DialogContent>
-                            Fill in the information of the Product.
-                          </DialogContent>
-                          <form
-                            onSubmit={(event) => {
-                              event.preventDefault();
-                              setOpen(false);
-                            }}
-                          >
-                            <Stack spacing={2}>
-                              <FormControl>
-                                <FormLabel>Product Name</FormLabel>
-                                <Input autoFocus required />
-                              </FormControl>
-                              <FormControl>
-                                <FormLabel>Product Details</FormLabel>
-                                <Input required />
-                              </FormControl>
-                              <FormControl>
-                                <FormLabel>Price</FormLabel>
-                                <Input type="number" required />
-                              </FormControl>
-                              <Button type="submit">Submit</Button>
-                            </Stack>
-                          </form>
-                        </ModalDialog>
-                      </Modal>
+                      </button>
+
+                      <div
+                        class="modal fade"
+                        id="exampleModal"
+                        tabindex="-1"
+                        aria-labelledby="exampleModalLabel"
+                        aria-hidden="true"
+                      >
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1
+                                class="modal-title fs-5"
+                                id="exampleModalLabel"
+                              >
+                                Update Details
+                              </h1>
+                              <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div class="modal-body">
+                              <FormLabel sx={{ marginBottom: "10px" }}>
+                                Product Name
+                              </FormLabel>
+                              <Input
+                                value={view?.product_name}
+                                name="product_name"
+                                onChange={handleUpdate}
+                                sx={{ marginBottom: "10px" }}
+                                placeholder="Enter Product Name"
+                                variant="outlined"
+                              />
+
+                              <FormLabel sx={{ marginBottom: "10px" }}>
+                                Product Details
+                              </FormLabel>
+                              <Input
+                                onChange={handleUpdate}
+                                value={view?.product_details}
+                                name="product_details"
+                                sx={{ marginBottom: "10px" }}
+                                placeholder="Enter Product Details"
+                                variant="outlined"
+                              />
+                              <FormLabel sx={{ marginBottom: "10px" }}>
+                                Price
+                              </FormLabel>
+                              <Input
+                                onChange={handleUpdate}
+                                value={view?.price}
+                                name="price"
+                                sx={{ marginBottom: "10px" }}
+                                placeholder="Enter Product Price"
+                                variant="outlined"
+                              />
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                data-bs-dismiss="modal"
+                                onClick={handleFinalUpdate}
+                                class="btn btn-primary"
+                              >
+                                Update
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell align="center">
                       <Button

@@ -5,6 +5,7 @@ import ProductItem from "./Components/ProductItem";
 import ProductForm from "./Components/ProductForm";
 import { useDispatch } from "react-redux";
 import { fetchData } from "./ReduxToolkit/Slice/reduxSlice";
+import Navbar from "./Components/Navbar";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
     // </Routes>
     // <Login/>
     <ProductForm />
+    // <Navbar/>
   );
 }
 

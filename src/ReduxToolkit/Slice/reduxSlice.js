@@ -54,6 +54,20 @@ export const DeleteData = createAsyncThunk("deletedata", async ({ id }) => {
     }
   }
 });
+export const UpdateData = createAsyncThunk("updatedata", async ({payload , id}) => {
+  try {
+    const res = await axios.put(process.env.REACT_APP_BASE_URL + id ,payload);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data);
+    } else if (error.request) {
+      throw new Error("No response received");
+    } else {
+      throw new Error("Request Setup Error");
+    }
+  }
+});
 
 export const reduxSlice = createSlice({
   name: "product",
@@ -93,9 +107,28 @@ export const reduxSlice = createSlice({
       .addCase(DeleteData.fulfilled, (state, action) => {
         console.log("🚀 ~ .addCase ~ action:", action);
         state.product.isLoading = false;
-        state.product.data = state.product.data.filter((val)=>val.id !== action.payload.id);
+        state.product.data = state.product.data.filter(
+          (val) => val.id !== action.payload.id
+        );
       })
       .addCase(DeleteData.rejected, (state, action) => {
+        state.product.isLoading = false;
+        state.product.isError = action.error.message;
+      })
+      .addCase(UpdateData.pending, (state) => {
+        state.product.isLoading = true;
+        state.product.isError = null;
+      })
+      .addCase(UpdateData.fulfilled, (state, action) => {
+        state.product.isLoading = false;
+        const index = state.product.data.findIndex(
+          (item) => item.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.product.data[index] = action.payload;
+        }
+      })
+      .addCase(UpdateData.rejected, (state, action) => {
         state.product.isLoading = false;
         state.product.isError = action.error.message;
       })
